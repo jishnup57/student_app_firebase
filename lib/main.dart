@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user_app_fire_pov/signup/view/signup_screen.dart';
+import 'package:user_app_fire_pov/login/view/screen_login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
        
         primarySwatch: Colors.blue,
       ),
-   home: const ScreenSignUP(),
+   home: const ScreenLogin(),
     );
   }
 }

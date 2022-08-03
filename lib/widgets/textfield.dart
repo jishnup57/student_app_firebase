@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 class CommonTextField extends StatelessWidget {
   const CommonTextField({
     Key? key,
+    required this.hintText,
+    required this.icon
   }) : super(key: key);
-
+  final String hintText;
+  final IconData icon;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,8 +23,11 @@ class CommonTextField extends StatelessWidget {
           )
         ]
       ),
-      child: TextField(
+      child: TextField( 
         decoration: InputDecoration(
+          hintText: hintText,
+          prefixIcon:  Icon(icon,color: Colors.deepOrangeAccent,),
+          
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             

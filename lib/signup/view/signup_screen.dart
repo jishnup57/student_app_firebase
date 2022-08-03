@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:user_app_fire_pov/routes/routs.dart';
 import 'package:user_app_fire_pov/widgets/textfield.dart';
 import 'package:user_app_fire_pov/widgets/wave_style.dart';
 
@@ -10,6 +12,7 @@ class ScreenSignUP extends StatelessWidget {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Column(
         children: [
@@ -38,15 +41,20 @@ class ScreenSignUP extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                const CommonTextField(),
+                const CommonTextField(
+                  hintText: 'Your email',
+                  icon: Icons.email,
+                ),
                 const SizedBox(
                   height: 20,
                 ),
-                const CommonTextField(),
+                const CommonTextField(
+                  hintText: 'Your password',
+                  icon: Icons.lock,
+                ),
                 const SizedBox(
                   height: 15,
                 ),
-            
               ],
             ),
           ),
@@ -55,7 +63,7 @@ class ScreenSignUP extends StatelessWidget {
           ),
           Container(
             width: w * .5,
-            height: h * 0.08,
+            height: h * 0.07,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
               image: const DecorationImage(
@@ -75,16 +83,17 @@ class ScreenSignUP extends StatelessWidget {
             height: 40,
           ),
           RichText(
-            text: const TextSpan(
+            text:  TextSpan(
                 text: "Already have an account?",
-                style: TextStyle(fontSize: 18, color: Colors.grey),
+                style: const TextStyle(fontSize: 18, color: Colors.grey),
                 children: [
                   TextSpan(
                     text: " Login",
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 18,
                         color: Colors.black,
                         fontWeight: FontWeight.bold),
+                        recognizer: TapGestureRecognizer()..onTap=()=>RoutesToScreens().pop(context: context)
                   ),
                 ]),
           ),
