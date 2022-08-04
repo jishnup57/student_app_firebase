@@ -1,9 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:user_app_fire_pov/login/view/screen_login.dart';
+import 'package:user_app_fire_pov/signup/view_mode/auth_service.dart';
 import 'package:user_app_fire_pov/user_home/view_mode/user_home_provider.dart';
+import 'package:user_app_fire_pov/wrapper/view/wrapper.dart';
 
-void main() {
+void main()async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -15,6 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        Provider<AuthService>(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (context) => HomeProv(),)
       ],
       child: MaterialApp(
@@ -24,7 +29,7 @@ class MyApp extends StatelessWidget {
          
           primarySwatch: Colors.blue,
         ),
-       home: const ScreenLogin(),
+       home: const Wrapper(),
       ),
     );
   }

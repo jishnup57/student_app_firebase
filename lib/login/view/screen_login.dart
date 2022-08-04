@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:user_app_fire_pov/routes/routs.dart';
 import 'package:user_app_fire_pov/signup/view/signup_screen.dart';
-import 'package:user_app_fire_pov/user_home/view/user_home.dart';
+import 'package:user_app_fire_pov/signup/view_mode/auth_service.dart';
 import 'package:user_app_fire_pov/widgets/textfield.dart';
 import 'package:user_app_fire_pov/widgets/wave_style.dart';
 
 class ScreenLogin extends StatelessWidget {
-  const ScreenLogin({Key? key}) : super(key: key);
-
+   ScreenLogin({Key? key}) : super(key: key);
+  final emailController=TextEditingController();
+  final passwordController=TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final authService=Provider.of<AuthService>(context);
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -42,16 +45,18 @@ class ScreenLogin extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                const CommonTextField(
+                 CommonTextField(
                   hintText: 'Your email',
                   icon: Icons.email,
+                  controller: emailController,
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                const CommonTextField(
+                 CommonTextField(
                   hintText: 'Your password',
                   icon: Icons.lock,
+                  controller: passwordController,
                 ),
                 const SizedBox(
                   height: 15,
@@ -90,7 +95,11 @@ class ScreenLogin extends StatelessWidget {
                 ),
               ),
             ),
-            onTap: () => RoutesToScreens().push(context: context, screen:  UserHome()),
+            onTap: () {
+              final email=emailController.text;
+              final password=passwordController.text;
+              authService.signInWithEmailAndPassword(email, password);
+            },
           ),
           const SizedBox(
             height: 40,
@@ -110,7 +119,7 @@ class ScreenLogin extends StatelessWidget {
                     ),
                   ]),
             ),
-            onTap: () => RoutesToScreens().push(context: context, screen: const ScreenSignUP()),
+            onTap: () => RoutesToScreens().push(context: context, screen:  ScreenSignUP()),
           ),
         ],
       ),

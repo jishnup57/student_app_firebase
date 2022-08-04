@@ -4,10 +4,12 @@ class CommonTextField extends StatelessWidget {
   const CommonTextField({
     Key? key,
     required this.hintText,
+    required this.controller,
     required this.icon
   }) : super(key: key);
   final String hintText;
   final IconData icon;
+  final TextEditingController controller;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,6 +26,7 @@ class CommonTextField extends StatelessWidget {
         ]
       ),
       child: TextField( 
+        controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
           prefixIcon:  Icon(icon,color: Colors.deepOrangeAccent,),
