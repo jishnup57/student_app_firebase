@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:user_app_fire_pov/login/view/screen_login.dart';
+import 'package:user_app_fire_pov/user_home/view_mode/user_home_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,14 +13,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-       
-        primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => HomeProv(),)
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+         
+          primarySwatch: Colors.blue,
+        ),
+       home: const ScreenLogin(),
       ),
-   home: const ScreenLogin(),
     );
   }
 }

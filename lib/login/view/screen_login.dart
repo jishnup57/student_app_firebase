@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:user_app_fire_pov/routes/routs.dart';
 import 'package:user_app_fire_pov/signup/view/signup_screen.dart';
+import 'package:user_app_fire_pov/user_home/view/user_home.dart';
 import 'package:user_app_fire_pov/widgets/textfield.dart';
 import 'package:user_app_fire_pov/widgets/wave_style.dart';
 
@@ -70,23 +71,26 @@ class ScreenLogin extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          Container(
-            width: w * .5,
-            height: h * 0.07,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              image: const DecorationImage(
-                  image: AssetImage('img/loginbtn.png'), fit: BoxFit.cover),
-            ),
-            child: const Center(
-              child: Text(
-                'Sign in',
-                style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+          InkWell(
+            child: Container(
+              width: w * .5,
+              height: h * 0.07,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                image: const DecorationImage(
+                    image: AssetImage('img/loginbtn.png'), fit: BoxFit.cover),
+              ),
+              child: const Center(
+                child: Text(
+                  'Sign in',
+                  style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
               ),
             ),
+            onTap: () => RoutesToScreens().push(context: context, screen:  UserHome()),
           ),
           const SizedBox(
             height: 40,
