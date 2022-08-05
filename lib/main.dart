@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:user_app_fire_pov/login/view_model/login_provider.dart';
+import 'package:user_app_fire_pov/routes/routs.dart';
 import 'package:user_app_fire_pov/signup/view_mode/auth_service.dart';
 import 'package:user_app_fire_pov/signup/view_mode/signup_provider.dart';
 import 'package:user_app_fire_pov/user_home/view/user_home.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
+        navigatorKey: Routes.navigatorKey,
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(

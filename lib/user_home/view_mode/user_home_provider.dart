@@ -3,12 +3,24 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+
 class HomeProv with ChangeNotifier {
   String img='';
 
-  final scaffoldkey = GlobalKey<ScaffoldState>();
+  final scaffoldKEY =GlobalKey<ScaffoldState>();
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
+  dynamic context;
+  setContext(BuildContext ctx){
+      context=ctx;
+  }
+
+  //String name=Provider.of<AuthService>(context,listen: false).uniqueEmail;
+
+ disposeController() {
+    nameController.clear();
+    phoneController.clear();
+  }
  
 
   pickImage()async{

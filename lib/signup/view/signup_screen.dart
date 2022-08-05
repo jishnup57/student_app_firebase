@@ -118,7 +118,7 @@ class ScreenSignUP extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                           recognizer: TapGestureRecognizer()
                             ..onTap =
-                                () => RoutesToScreens().pop(context: context)),
+                                () => Routes.pop()),
                     ]),
               ),
             ],

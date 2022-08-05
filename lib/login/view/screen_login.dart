@@ -127,8 +127,8 @@ class ScreenLogin extends StatelessWidget {
                     ),
                   ]),
             ),
-            onTap: () => RoutesToScreens()
-                .push(context: context, screen: const ScreenSignUP()),
+            onTap: () => Routes
+                .push( screen: const ScreenSignUP()),
           ),
         ],
       ),
