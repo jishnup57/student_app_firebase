@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:user_app_fire_pov/login/view_model/login_provider.dart';
 import 'package:user_app_fire_pov/signup/view_mode/auth_service.dart';
 import 'package:user_app_fire_pov/user_home/view_mode/user_home_provider.dart';
 import 'package:user_app_fire_pov/wrapper/view/wrapper.dart';
@@ -20,7 +21,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<AuthService>(create: (_) => AuthService()),
-        ChangeNotifierProvider(create: (context) => HomeProv(),)
+        ChangeNotifierProvider(create: (context) => HomeProv(),),
+        ChangeNotifierProvider(create: (context) => LoginProv(),)
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

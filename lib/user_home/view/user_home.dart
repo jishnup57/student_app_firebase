@@ -11,17 +11,13 @@ import '../view_mode/user_home_provider.dart';
 import '../widget/appbarstyle.dart';
 
 class UserHome extends StatelessWidget {
-  UserHome({Key? key}) : super(key: key);
-  final scaffoldkey = GlobalKey<ScaffoldState>();
-  final nameController = TextEditingController();
-  final phoneController = TextEditingController();
+  const UserHome({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final authService=Provider.of<AuthService>(context);
-    // double w = MediaQuery.of(context).size.width;
-    // double h = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      key: scaffoldkey,
+ 
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Welcome'),
@@ -29,8 +25,8 @@ class UserHome extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () async{
-                await authService.signOut();
-                context.read<HomeProv>().imageToNUll();
+                await context.read<AuthService>().signOut(context);
+                
               },
               icon: const Icon(Icons.logout))
         ],
@@ -72,13 +68,13 @@ class UserHome extends StatelessWidget {
                     CommonTextField(
                       hintText: "Enter name",
                       icon: Icons.contact_page,
-                      controller: nameController,
+                      controller: context.read<HomeProv>().nameController,
                     ),
                     kHight10,
                     CommonTextField(
                       hintText: "Phone Number",
                       icon: Icons.phone,
-                      controller: phoneController,
+                      controller: context.read<HomeProv>().phoneController,
                     ),
                     ElevatedButton(
                       onPressed: () {},
