@@ -48,6 +48,47 @@ class _UserHomeState extends State<UserHome> {
             ],
             flexibleSpace: const StyledAppBar(),
           ),
+
+          body:StreamBuilder(
+        stream: products.snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+          if (streamSnapshot.hasData) {
+            return ListView.builder(
+              itemCount: streamSnapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                final DocumentSnapshot documentSnapshot =
+                    streamSnapshot.data!.docs[index];
+                return Card(
+                  margin: const EdgeInsets.all(10),
+                  child: 
+                  ListTile(
+                    leading: CircleAvatar(
+                      radius: 30,
+                      backgroundImage: MemoryImage(
+                              const Base64Decoder()
+                                  .convert(documentSnapshot['image'])),
+                    ),
+                    title: Text(documentSnapshot['name']),
+                    subtitle: Text(documentSnapshot['Phone'].toString()),
+                    trailing: IconButton(icon: const Icon(Icons.delete),
+                    onPressed: (){
+                      delete(documentSnapshot.id,context,products);
+                    },
+                    ),
+                  ),
+                );
+              },
+            );
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ) ,
+
+
+
           floatingActionButton: FloatingActionButton(
             onPressed: () {
             
@@ -67,6 +108,12 @@ class _UserHomeState extends State<UserHome> {
         );
       },
     );
+  }
+  Future<void> delete(String productId,BuildContext context,CollectionReference products) async {
+    await products.doc(productId).delete();
+
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('You have successfully deleted a product')));
   }
 }
 
@@ -133,9 +180,10 @@ class BottomSheetBody extends StatelessWidget {
                       .read<HomeProv>()
                       .phoneController
                       .text);
-                  if (phone != null) {
+                  final img=context.read<HomeProv>().img;
+                  if (phone != null||img.isNotEmpty) {
                     await products
-                        .add({"name": name, "Phone": phone});
+                        .add({"name": name, "Phone": phone,"image":img});
       
                     context.read<HomeProv>().disposeController();
                     Navigator.of(context).pop();
@@ -151,4 +199,5 @@ class BottomSheetBody extends StatelessWidget {
       ),
     );
   }
+  
 }
