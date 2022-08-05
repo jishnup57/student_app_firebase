@@ -3,17 +3,19 @@ import 'package:provider/provider.dart';
 import 'package:user_app_fire_pov/login/view_model/login_provider.dart';
 import 'package:user_app_fire_pov/routes/routs.dart';
 import 'package:user_app_fire_pov/signup/view/signup_screen.dart';
+import 'package:user_app_fire_pov/signup/view_mode/auth_service.dart';
 import 'package:user_app_fire_pov/widgets/textfield.dart';
 import 'package:user_app_fire_pov/widgets/wave_style.dart';
 
 class ScreenLogin extends StatelessWidget {
-   const ScreenLogin({Key? key}) : super(key: key);
- 
+  const ScreenLogin({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
+      key: context.read<LoginProv>().scaffoldKey,
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Column(
@@ -43,7 +45,7 @@ class ScreenLogin extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                 CommonTextField(
+                CommonTextField(
                   hintText: 'Your email',
                   icon: Icons.email,
                   controller: context.read<LoginProv>().emailController,
@@ -51,7 +53,7 @@ class ScreenLogin extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                 CommonTextField(
+                CommonTextField(
                   hintText: 'Your password',
                   icon: Icons.lock,
                   controller: context.read<LoginProv>().passwordController,
@@ -83,18 +85,28 @@ class ScreenLogin extends StatelessWidget {
                 image: const DecorationImage(
                     image: AssetImage('img/loginbtn.png'), fit: BoxFit.cover),
               ),
-              child: const Center(
-                child: Text(
-                  'Sign in',
-                  style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+              child: Center(
+                child: Consumer<AuthService>(
+                  builder: (__, value, _) => value.loading == true
+                      ? const Text(
+                          'Loading..',
+                          style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        )
+                      : const Text(
+                          'Sign in',
+                          style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
                 ),
               ),
             ),
-            onTap: () {
-             context.read<LoginProv>().onSignInButtonPress(context);
+            onTap: () async {
+              await context.read<LoginProv>().onSignInButtonPress(context);
             },
           ),
           const SizedBox(
@@ -115,7 +127,8 @@ class ScreenLogin extends StatelessWidget {
                     ),
                   ]),
             ),
-            onTap: () => RoutesToScreens().push(context: context, screen:  ScreenSignUP()),
+            onTap: () => RoutesToScreens()
+                .push(context: context, screen: const ScreenSignUP()),
           ),
         ],
       ),

@@ -1,37 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:user_app_fire_pov/signup/view_mode/auth_service.dart';
 import 'package:provider/provider.dart';
+import 'package:user_app_fire_pov/signup/view_mode/auth_service.dart';
 
-class LoginProv with ChangeNotifier {
+class SignUpProv extends ChangeNotifier {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final scaffoldkey = GlobalKey<ScaffoldState>();
 
   disposeController() {
     emailController.clear();
     passwordController.clear();
   }
 
-  onSignInButtonPress(BuildContext context) async {
+  onSignUpButtonPress() async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
     if (email.isEmpty || password.isEmpty) {
       showSnakBar('Enter All Fields');
-      return ;
+      return;
     }
-    final msg = await context.read<AuthService>().signIn(email, password);
-    disposeController();
-
+    final msg = await scaffoldkey.currentContext!
+        .read<AuthService>()
+        .signUp(email, password);
     if (msg == '') {
+      disposeController();
       return;
     }
     showSnakBar(msg);
-    
+    disposeController();
   }
 
   showSnakBar(String msg) {
-    ScaffoldMessenger.of(scaffoldKey.currentContext!).hideCurrentSnackBar();
-    ScaffoldMessenger.of(scaffoldKey.currentContext!)
+    ScaffoldMessenger.of(scaffoldkey.currentContext!).hideCurrentSnackBar();
+    ScaffoldMessenger.of(scaffoldkey.currentContext!)
         .showSnackBar(SnackBar(content: Text(msg)));
   }
 }
