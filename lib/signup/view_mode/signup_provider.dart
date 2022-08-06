@@ -22,13 +22,21 @@ class SignUpProv extends ChangeNotifier {
     final msg = await scaffoldkey.currentContext!
         .read<AuthService>()
         .signUp(email, password);
-    if (msg == '') {
+    if (msg == '')  {
+    // await shared();
       disposeController();
       return;
     }
     showSnakBar(msg);
     disposeController();
   }
+
+  // shared() async {
+  //   final obj = await SharedPreferences.getInstance();
+  //   uniqueEmail = emailController.text.trim();
+  //   obj.setString('mail', emailController.text.trim());
+  // }
+
 
   showSnakBar(String msg) {
     ScaffoldMessenger.of(scaffoldkey.currentContext!).hideCurrentSnackBar();

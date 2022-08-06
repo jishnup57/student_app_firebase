@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:user_app_fire_pov/routes/routs.dart';
 
-enum TypeData{
+enum TypeData {
   edit,
   create,
 }
@@ -16,17 +16,18 @@ class HomeProv with ChangeNotifier {
   final scaffoldKEY = GlobalKey<ScaffoldState>();
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
-  dynamic context;
-  setContext(BuildContext ctx) {
-    context = ctx;
-  }
-
-  //String name=Provider.of<AuthService>(context,listen: false).uniqueEmail;
 
   disposeController() {
     nameController.clear();
     phoneController.clear();
   }
+
+//  late String userMail;
+
+// shared() async {
+//   final obj = await SharedPreferences.getInstance();
+//  userMail =  obj.getString('mail') ?? uniqueEmail;
+// }
 
   pickImage() async {
     final imageFromGallery =
@@ -47,7 +48,7 @@ class HomeProv with ChangeNotifier {
     final String name = nameController.text;
     final double? phone = double.tryParse(phoneController.text);
 
-    if (phone != null && img.isNotEmpty&& name.isNotEmpty) {
+    if (phone != null && img.isNotEmpty && name.isNotEmpty) {
       await products.add({"name": name, "Phone": phone, "image": img});
 
       disposeController();
@@ -55,16 +56,17 @@ class HomeProv with ChangeNotifier {
       Routes.pop();
     }
   }
-   onUpdateButtonPressed(CollectionReference products,DocumentSnapshot documentSnapshot) async {
+
+  onUpdateButtonPressed(
+      CollectionReference products, DocumentSnapshot documentSnapshot) async {
     final String name = nameController.text;
     final double? phone = double.tryParse(phoneController.text);
 
-    if (phone != null && img.isNotEmpty&& name.isNotEmpty) {
-
+    if (phone != null && img.isNotEmpty && name.isNotEmpty) {
       await products
-                            .doc(documentSnapshot.id)
-                            .update({"name": name, "Phone": phone, "image": img});
-     // await products.add({"name": name, "Phone": phone, "image": img});
+          .doc(documentSnapshot.id)
+          .update({"name": name, "Phone": phone, "image": img});
+      // await products.add({"name": name, "Phone": phone, "image": img});
 
       disposeController();
       imageToNUll();
@@ -72,13 +74,11 @@ class HomeProv with ChangeNotifier {
     }
   }
 
-   Future<void> delete(String productId,CollectionReference products) async {
+  Future<void> delete(String productId, CollectionReference products) async {
     await products.doc(productId).delete();
-    
-    showSnakBar('You have successfully deleted a Field');
-   
-  }
 
+    showSnakBar('You have successfully deleted a Field');
+  }
 
   showSnakBar(String msg) {
     ScaffoldMessenger.of(scaffoldKEY.currentContext!).hideCurrentSnackBar();
@@ -86,28 +86,28 @@ class HomeProv with ChangeNotifier {
         .showSnackBar(SnackBar(content: Text(msg)));
   }
 
-  checkOperation({TypeData? type,DocumentSnapshot? documentSnapshot}){
-    
-    if (type==TypeData.edit) {
-      nameController.text=documentSnapshot!['name'];
-      phoneController.text=documentSnapshot['Phone'].toString();
-      img=documentSnapshot['image'];
+  checkOperation({TypeData? type, DocumentSnapshot? documentSnapshot}) {
+    if (type == TypeData.edit) {
+      nameController.text = documentSnapshot!['name'];
+      phoneController.text = documentSnapshot['Phone'].toString();
+      img = documentSnapshot['image'];
     }
-
   }
 
-  String nameConversion(double data){
+  String nameConversion(double data) {
     return data.toInt().toString();
   }
 
-  // onSubmitButtonCheck({required TypeData type,}CollectionReference products){
-  //   switch ( type) {
-  //     case TypeData.create :
-  //        onAddButtonPressed({CollectionReference products});
-  //       break;
-  //     default:
-  //   }
-  // }
-
-
+  onSubmitButtonCheck(
+      {required TypeData type,
+      required CollectionReference products,
+      DocumentSnapshot? documentSnapshot}) {
+    switch (type) {
+      case TypeData.create:
+        onAddButtonPressed(products);
+        break;
+      case TypeData.edit:
+        onUpdateButtonPressed(products, documentSnapshot!);
+    }
+  }
 }

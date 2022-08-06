@@ -77,8 +77,10 @@ class _UserHomeState extends State<UserHome> {
                               .convert(documentSnapshot['image'])),
                         ),
                         title: Text(documentSnapshot['name']),
-                        subtitle: Text(context.read<HomeProv>().nameConversion(documentSnapshot['Phone'])),
-                      //  subtitle: Text(documentSnapshot['Phone'].toString()),
+                        subtitle: Text(context
+                            .read<HomeProv>()
+                            .nameConversion(documentSnapshot['Phone'])),
+                        //  subtitle: Text(documentSnapshot['Phone'].toString()),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
@@ -121,7 +123,7 @@ class _UserHomeState extends State<UserHome> {
   }
 }
 
-class BottomSheetBody extends StatelessWidget {
+class BottomSheetBody extends StatefulWidget {
   const BottomSheetBody({
     Key? key,
     required this.products,
@@ -133,11 +135,19 @@ class BottomSheetBody extends StatelessWidget {
   final DocumentSnapshot? documentSnapshot;
 
   @override
-  Widget build(BuildContext context) {
-    context
-        .read<HomeProv>()
-        .checkOperation(documentSnapshot: documentSnapshot, type: type);
+  State<BottomSheetBody> createState() => _BottomSheetBodyState();
+}
 
+class _BottomSheetBodyState extends State<BottomSheetBody> {
+  @override
+  void initState() {
+    context.read<HomeProv>().checkOperation(
+        documentSnapshot: widget.documentSnapshot, type: widget.type);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final MediaQueryData mediqurydata = MediaQuery.of(context);
     return Padding(
       padding: mediqurydata.viewInsets,
@@ -180,14 +190,13 @@ class BottomSheetBody extends StatelessWidget {
               kHight10,
               ElevatedButton(
                 onPressed: () {
-                  if (type==TypeData.create) {
-                  context.read<HomeProv>().onAddButtonPressed(products);
-                    return;
-                  }
-                   context.read<HomeProv>().onUpdateButtonPressed(products,documentSnapshot!);
+                  context.read<HomeProv>().onSubmitButtonCheck(
+                      type: widget.type,
+                      products: widget.products,
+                      documentSnapshot: widget.documentSnapshot);
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.deepOrange),
-                child:  Text(type==TypeData.create?'Add':'Update'),
+                child: Text(widget.type == TypeData.create ? 'Add' : 'Update'),
               )
             ],
           ),
