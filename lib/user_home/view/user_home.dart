@@ -32,7 +32,7 @@ class _UserHomeState extends State<UserHome> {
           return const ScreenLogin();
         }
         return Scaffold(
-          key: context.read<HomeProv>().scaffoldKEY,
+         // key: context.read<HomeProv>().scaffoldKEY,
           appBar: AppBar(
             automaticallyImplyLeading: false,
             title: const Text('Welcome'),
@@ -87,6 +87,8 @@ class _UserHomeState extends State<UserHome> {
                             context
                                 .read<HomeProv>()
                                 .delete(documentSnapshot.id, products);
+                          context
+                                .read<HomeProv>().showSnakBar('You have successfully deleted a Field',context);
                           },
                         ),
                       ),
@@ -147,8 +149,8 @@ class _BottomSheetBodyState extends State<BottomSheetBody> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final MediaQueryData mediqurydata = MediaQuery.of(context);
+  Widget build(BuildContext bcontext) {
+    final MediaQueryData mediqurydata = MediaQuery.of(bcontext);
     return Padding(
       padding: mediqurydata.viewInsets,
       child: SingleChildScrollView(
@@ -171,7 +173,7 @@ class _BottomSheetBodyState extends State<BottomSheetBody> {
                           backgroundImage: AssetImage('img/img_avatar.png'),
                         ),
                   onTap: () {
-                    context.read<HomeProv>().pickImage();
+                    bcontext.read<HomeProv>().pickImage();
                   },
                 ),
               ),
@@ -179,18 +181,18 @@ class _BottomSheetBodyState extends State<BottomSheetBody> {
               CommonTextField(
                 hintText: "Enter name",
                 icon: Icons.contact_page,
-                controller: context.read<HomeProv>().nameController,
+                controller: bcontext.read<HomeProv>().nameController,
               ),
               kHight10,
               CommonTextField(
                 hintText: "Phone Number",
                 icon: Icons.phone,
-                controller: context.read<HomeProv>().phoneController,
+                controller: bcontext.read<HomeProv>().phoneController,
               ),
               kHight10,
               ElevatedButton(
                 onPressed: () {
-                  context.read<HomeProv>().onSubmitButtonCheck(
+                  bcontext.read<HomeProv>().onSubmitButtonCheck(
                       type: widget.type,
                       products: widget.products,
                       documentSnapshot: widget.documentSnapshot);

@@ -24,7 +24,7 @@ class ScreenSignUP extends StatelessWidget {
           return const UserHome();
         }
         return Scaffold(
-          key: context.read<SignUpProv>().scaffoldkey,
+         // key: context.read<SignUpProv>().scaffoldkey,
           resizeToAvoidBottomInset: false,
           backgroundColor: Colors.white,
           body: Column(
@@ -97,7 +97,7 @@ class ScreenSignUP extends StatelessWidget {
                     onTap: () async {
                       await context
                           .read<SignUpProv>()
-                          .onSignUpButtonPress();
+                          .onSignUpButtonPress(context);
                     },
                   ),
                 ),

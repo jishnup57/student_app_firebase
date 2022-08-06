@@ -13,7 +13,7 @@ enum TypeData {
 class HomeProv with ChangeNotifier {
   String img = '';
 
-  final scaffoldKEY = GlobalKey<ScaffoldState>();
+ // final scaffoldKEY = GlobalKey<ScaffoldState>();
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
 
@@ -66,7 +66,6 @@ class HomeProv with ChangeNotifier {
       await products
           .doc(documentSnapshot.id)
           .update({"name": name, "Phone": phone, "image": img});
-      // await products.add({"name": name, "Phone": phone, "image": img});
 
       disposeController();
       imageToNUll();
@@ -77,12 +76,12 @@ class HomeProv with ChangeNotifier {
   Future<void> delete(String productId, CollectionReference products) async {
     await products.doc(productId).delete();
 
-    showSnakBar('You have successfully deleted a Field');
+    
   }
 
-  showSnakBar(String msg) {
-    ScaffoldMessenger.of(scaffoldKEY.currentContext!).hideCurrentSnackBar();
-    ScaffoldMessenger.of(scaffoldKEY.currentContext!)
+  showSnakBar(String msg,BuildContext ctx) {
+    ScaffoldMessenger.of(ctx).hideCurrentSnackBar();
+    ScaffoldMessenger.of(ctx)
         .showSnackBar(SnackBar(content: Text(msg)));
   }
 
