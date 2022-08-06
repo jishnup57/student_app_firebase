@@ -25,7 +25,6 @@ class _UserHomeState extends State<UserHome> {
   Widget build(BuildContext context) {
     final CollectionReference products =
         FirebaseFirestore.instance.collection(uniqueEmail);
-    final MediaQueryData mediqurydata=MediaQuery.of(context);
     return StreamBuilder<User?>(
       stream: context.watch<AuthService>().stream(),
       builder: (context, snapshot) {
@@ -33,7 +32,6 @@ class _UserHomeState extends State<UserHome> {
           return const ScreenLogin();
         }
         return Scaffold(
-         // resizeToAvoidBottomInset: false,
           key: context.read<HomeProv>().scaffoldKEY,
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -48,58 +46,70 @@ class _UserHomeState extends State<UserHome> {
             ],
             flexibleSpace: const StyledAppBar(),
           ),
-
-          body:StreamBuilder(
-        stream: products.snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-          if (streamSnapshot.hasData) {
-            return ListView.builder(
-              itemCount: streamSnapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                final DocumentSnapshot documentSnapshot =
-                    streamSnapshot.data!.docs[index];
-                return Card(
-                  margin: const EdgeInsets.all(10),
-                  child: 
-                  ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      backgroundImage: MemoryImage(
-                              const Base64Decoder()
-                                  .convert(documentSnapshot['image'])),
-                    ),
-                    title: Text(documentSnapshot['name']),
-                    subtitle: Text(documentSnapshot['Phone'].toString()),
-                    trailing: IconButton(icon: const Icon(Icons.delete),
-                    onPressed: (){
-                      delete(documentSnapshot.id,context,products);
-                    },
-                    ),
-                  ),
-                );
-              },
-            );
-          }
-
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      ) ,
-
-
-
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-            
-            showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (_) {
-                    return BottomSheetBody(products: products);
+          body: StreamBuilder(
+            stream: products.snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+              if (streamSnapshot.hasData) {
+                return ListView.builder(
+                  itemCount: streamSnapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    final DocumentSnapshot documentSnapshot =
+                        streamSnapshot.data!.docs[index];
+                    return Card(
+                      margin: const EdgeInsets.all(10),
+                      child: ListTile(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (_) {
+                              return BottomSheetBody(
+                                products: products,
+                                type: TypeData.edit,
+                                documentSnapshot: documentSnapshot,
+                              );
+                            },
+                          );
+                        },
+                        leading: CircleAvatar(
+                          radius: 30,
+                          backgroundImage: MemoryImage(const Base64Decoder()
+                              .convert(documentSnapshot['image'])),
+                        ),
+                        title: Text(documentSnapshot['name']),
+                        subtitle: Text(context.read<HomeProv>().nameConversion(documentSnapshot['Phone'])),
+                      //  subtitle: Text(documentSnapshot['Phone'].toString()),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            context
+                                .read<HomeProv>()
+                                .delete(documentSnapshot.id, products);
+                          },
+                        ),
+                      ),
+                    );
                   },
                 );
-            
+              }
+
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (_) {
+                  return BottomSheetBody(
+                    products: products,
+                    type: TypeData.create,
+                  );
+                },
+              );
             },
             child: const FloatButton(),
           ),
@@ -109,34 +119,32 @@ class _UserHomeState extends State<UserHome> {
       },
     );
   }
-  Future<void> delete(String productId,BuildContext context,CollectionReference products) async {
-    await products.doc(productId).delete();
-
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('You have successfully deleted a product')));
-  }
 }
 
 class BottomSheetBody extends StatelessWidget {
   const BottomSheetBody({
     Key? key,
     required this.products,
+    required this.type,
+    this.documentSnapshot,
   }) : super(key: key);
-
+  final TypeData type;
   final CollectionReference<Object?> products;
+  final DocumentSnapshot? documentSnapshot;
 
   @override
   Widget build(BuildContext context) {
-    final MediaQueryData mediqurydata=MediaQuery.of(context);
+    context
+        .read<HomeProv>()
+        .checkOperation(documentSnapshot: documentSnapshot, type: type);
+
+    final MediaQueryData mediqurydata = MediaQuery.of(context);
     return Padding(
       padding: mediqurydata.viewInsets,
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(
-              top: 20,
-              left: 8,
-              right: 8,
-              bottom:30),
+          padding:
+              const EdgeInsets.only(top: 20, left: 8, right: 8, bottom: 30),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -146,13 +154,11 @@ class BottomSheetBody extends StatelessWidget {
                       ? CircleAvatar(
                           radius: 30,
                           backgroundImage: MemoryImage(
-                              const Base64Decoder()
-                                  .convert(value.img)),
+                              const Base64Decoder().convert(value.img)),
                         )
                       : const CircleAvatar(
                           radius: 30,
-                          backgroundImage:
-                              AssetImage('img/img_avatar.png'),
+                          backgroundImage: AssetImage('img/img_avatar.png'),
                         ),
                   onTap: () {
                     context.read<HomeProv>().pickImage();
@@ -169,29 +175,19 @@ class BottomSheetBody extends StatelessWidget {
               CommonTextField(
                 hintText: "Phone Number",
                 icon: Icons.phone,
-                controller:
-                    context.read<HomeProv>().phoneController,
+                controller: context.read<HomeProv>().phoneController,
               ),
+              kHight10,
               ElevatedButton(
-                onPressed: () async {
-                  final String name =
-                      context.read<HomeProv>().nameController.text;
-                  final double? phone = double.tryParse(context
-                      .read<HomeProv>()
-                      .phoneController
-                      .text);
-                  final img=context.read<HomeProv>().img;
-                  if (phone != null||img.isNotEmpty) {
-                    await products
-                        .add({"name": name, "Phone": phone,"image":img});
-      
-                    context.read<HomeProv>().disposeController();
-                    Navigator.of(context).pop();
+                onPressed: () {
+                  if (type==TypeData.create) {
+                  context.read<HomeProv>().onAddButtonPressed(products);
+                    return;
                   }
+                   context.read<HomeProv>().onUpdateButtonPressed(products,documentSnapshot!);
                 },
-                style: ElevatedButton.styleFrom(
-                    primary: Colors.deepOrange),
-                child: const Text('Add'),
+                style: ElevatedButton.styleFrom(primary: Colors.deepOrange),
+                child:  Text(type==TypeData.create?'Add':'Update'),
               )
             ],
           ),
@@ -199,5 +195,4 @@ class BottomSheetBody extends StatelessWidget {
       ),
     );
   }
-  
 }
