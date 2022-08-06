@@ -8,7 +8,6 @@ import 'package:user_app_fire_pov/constants/constants.dart';
 import 'package:user_app_fire_pov/login/view/screen_login.dart';
 import 'package:user_app_fire_pov/signup/view_mode/auth_service.dart';
 import 'package:user_app_fire_pov/user_home/widget/floatbutton.dart';
-import 'package:user_app_fire_pov/widgets/textfield.dart';
 
 import '../view_mode/user_home_provider.dart';
 import '../widget/appbarstyle.dart';
@@ -32,7 +31,6 @@ class _UserHomeState extends State<UserHome> {
           return const ScreenLogin();
         }
         return Scaffold(
-         // key: context.read<HomeProv>().scaffoldKEY,
           appBar: AppBar(
             automaticallyImplyLeading: false,
             title: const Text('Welcome'),
@@ -87,8 +85,9 @@ class _UserHomeState extends State<UserHome> {
                             context
                                 .read<HomeProv>()
                                 .delete(documentSnapshot.id, products);
-                          context
-                                .read<HomeProv>().showSnakBar('You have successfully deleted a Field',context);
+                            context.read<HomeProv>().showSnakBar(
+                                'You have successfully deleted a Field',
+                                context);
                           },
                         ),
                       ),
@@ -147,6 +146,7 @@ class _BottomSheetBodyState extends State<BottomSheetBody> {
         documentSnapshot: widget.documentSnapshot, type: widget.type);
     super.initState();
   }
+    final formKey=GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext bcontext) {
@@ -157,53 +157,81 @@ class _BottomSheetBodyState extends State<BottomSheetBody> {
         child: Padding(
           padding:
               const EdgeInsets.only(top: 20, left: 8, right: 8, bottom: 30),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Consumer<HomeProv>(
-                builder: (context, value, _) => GestureDetector(
-                  child: value.img.isNotEmpty
-                      ? CircleAvatar(
-                          radius: 30,
-                          backgroundImage: MemoryImage(
-                              const Base64Decoder().convert(value.img)),
-                        )
-                      : const CircleAvatar(
-                          radius: 30,
-                          backgroundImage: AssetImage('img/img_avatar.png'),
-                        ),
-                  onTap: () {
-                    bcontext.read<HomeProv>().pickImage();
+          child: Form(
+             key:formKey ,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Consumer<HomeProv>(
+                  builder: (context, value, _) => GestureDetector(
+                    child: value.img.isNotEmpty
+                        ? CircleAvatar(
+                            radius: 30,
+                            backgroundImage: MemoryImage(
+                                const Base64Decoder().convert(value.img)),
+                          )
+                        : const CircleAvatar(
+                            radius: 30,
+                            backgroundImage: AssetImage('img/img_avatar.png'),
+                          ),
+                    onTap: () {
+                      bcontext.read<HomeProv>().pickImage();
+                    },
+                  ),
+                ),
+                kHight10,
+                TextFormField(
+                  controller:  bcontext.read<HomeProv>().nameController,
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.contact_page,color: Colors.deepOrangeAccent,),
+                    labelText: 'Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value != null && value.isEmpty) {
+                      return 'you should enter name';
+                    }
+                    return null;
                   },
                 ),
-              ),
-              kHight10,
-              CommonTextField(
-                hintText: "Enter name",
-                icon: Icons.contact_page,
-                controller: bcontext.read<HomeProv>().nameController,
-              ),
-              kHight10,
-              CommonTextField(
-                hintText: "Phone Number",
-                icon: Icons.phone,
-                controller: bcontext.read<HomeProv>().phoneController,
-              ),
-              kHight10,
-              ElevatedButton(
-                onPressed: () {
-                  bcontext.read<HomeProv>().onSubmitButtonCheck(
-                      type: widget.type,
-                      products: widget.products,
-                      documentSnapshot: widget.documentSnapshot);
-                },
-                style: ElevatedButton.styleFrom(primary: Colors.deepOrange),
-                child: Text(widget.type == TypeData.create ? 'Add' : 'Update'),
-              )
-            ],
+                kHight10,
+                TextFormField(
+                  controller:  bcontext.read<HomeProv>().phoneController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.phone_android,color: Colors.deepOrangeAccent,),
+                    labelText: 'Phone Number',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value != null && value.isEmpty) {
+                      return 'Phone number should not be empty';
+                    }
+                    return null;
+                  },
+                ),
+                kHight10,
+                ElevatedButton(
+                  onPressed: () {
+
+                    bcontext.read<HomeProv>().keyBoardHide(bcontext);
+                    if (!formKey.currentState!.validate()) {
+                      return;
+                    }
+                    bcontext.read<HomeProv>().onSubmitButtonCheck(
+                        type: widget.type,
+                        products: widget.products,
+                        documentSnapshot: widget.documentSnapshot);
+                  },
+                  style: ElevatedButton.styleFrom(primary: Colors.deepOrange),
+                  child: Text(widget.type == TypeData.create ? 'Add' : 'Update'),
+                )
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+

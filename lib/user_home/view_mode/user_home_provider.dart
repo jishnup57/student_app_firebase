@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:user_app_fire_pov/constants/constants.dart';
 import 'package:user_app_fire_pov/routes/routs.dart';
 
 enum TypeData {
@@ -11,11 +12,13 @@ enum TypeData {
 }
 
 class HomeProv with ChangeNotifier {
+
   String img = '';
 
  // final scaffoldKEY = GlobalKey<ScaffoldState>();
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
+  
 
   disposeController() {
     nameController.clear();
@@ -47,6 +50,10 @@ class HomeProv with ChangeNotifier {
   onAddButtonPressed(CollectionReference products) async {
     final String name = nameController.text;
     final double? phone = double.tryParse(phoneController.text);
+    
+    if (img.isEmpty) {
+      img=tempImage;
+    }
 
     if (phone != null && img.isNotEmpty && name.isNotEmpty) {
       await products.add({"name": name, "Phone": phone, "image": img});
@@ -107,6 +114,13 @@ class HomeProv with ChangeNotifier {
         break;
       case TypeData.edit:
         onUpdateButtonPressed(products, documentSnapshot!);
+    }
+  }
+
+  keyBoardHide(BuildContext ctx){
+    FocusScopeNode currentFocus = FocusScope.of(ctx);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
     }
   }
 }
