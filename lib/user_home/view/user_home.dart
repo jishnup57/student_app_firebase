@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:user_app_fire_pov/constants/constants.dart';
 import 'package:user_app_fire_pov/login/view/screen_login.dart';
 import 'package:user_app_fire_pov/signup/view_mode/auth_service.dart';
+import 'package:user_app_fire_pov/user_home/model/user_details.dart';
 import 'package:user_app_fire_pov/user_home/widget/floatbutton.dart';
 
 import '../view_mode/user_home_provider.dart';
@@ -48,11 +49,18 @@ class _UserHomeState extends State<UserHome> {
             stream: products.snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
               if (streamSnapshot.hasData) {
+                final newList=streamSnapshot.data!.docs.map((e) {
+                    return Details.fromJson(e.data() as Map<String,dynamic>);
+                }).toList();
                 return ListView.builder(
-                  itemCount: streamSnapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    final DocumentSnapshot documentSnapshot =
-                        streamSnapshot.data!.docs[index];
+                  // itemCount: streamSnapshot.data!.docs.length,
+                  // itemBuilder: (context, index) {
+                  //   final DocumentSnapshot documentSnapshot =
+                  //       streamSnapshot.data!.docs[index];
+                    itemCount: newList.length,
+                    itemBuilder: (context, index) {
+                      
+                      final newValue=newList[index];
                     return Card(
                       margin: const EdgeInsets.all(10),
                       child: ListTile(
@@ -64,7 +72,7 @@ class _UserHomeState extends State<UserHome> {
                               return BottomSheetBody(
                                 products: products,
                                 type: TypeData.edit,
-                                documentSnapshot: documentSnapshot,
+                                model: newValue,
                               );
                             },
                           );
@@ -72,19 +80,19 @@ class _UserHomeState extends State<UserHome> {
                         leading: CircleAvatar(
                           radius: 30,
                           backgroundImage: MemoryImage(const Base64Decoder()
-                              .convert(documentSnapshot['image'])),
+                              .convert(newValue.image.toString())),
                         ),
-                        title: Text(documentSnapshot['name']),
+                        title: Text(newValue.name.toString()),
                         subtitle: Text(context
                             .read<HomeProv>()
-                            .nameConversion(documentSnapshot['Phone'])),
+                            .nameConversion(newValue.phone!.toDouble())),
                         //  subtitle: Text(documentSnapshot['Phone'].toString()),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
                             context
                                 .read<HomeProv>()
-                                .delete(documentSnapshot.id, products);
+                                .delete(newValue.id.toString(), products);
                             context.read<HomeProv>().showSnakBar(
                                 'You have successfully deleted a Field',
                                 context);
@@ -129,11 +137,11 @@ class BottomSheetBody extends StatefulWidget {
     Key? key,
     required this.products,
     required this.type,
-    this.documentSnapshot,
+    this.model,
   }) : super(key: key);
   final TypeData type;
   final CollectionReference<Object?> products;
-  final DocumentSnapshot? documentSnapshot;
+  final Details? model;
 
   @override
   State<BottomSheetBody> createState() => _BottomSheetBodyState();
@@ -143,7 +151,7 @@ class _BottomSheetBodyState extends State<BottomSheetBody> {
   @override
   void initState() {
     context.read<HomeProv>().checkOperation(
-        documentSnapshot: widget.documentSnapshot, type: widget.type);
+       model : widget.model, type: widget.type);
     super.initState();
   }
     final formKey=GlobalKey<FormState>();
@@ -221,7 +229,7 @@ class _BottomSheetBodyState extends State<BottomSheetBody> {
                     bcontext.read<HomeProv>().onSubmitButtonCheck(
                         type: widget.type,
                         products: widget.products,
-                        documentSnapshot: widget.documentSnapshot);
+                        model: widget.model);
                   },
                   style: ElevatedButton.styleFrom(primary: Colors.deepOrange),
                   child: Text(widget.type == TypeData.create ? 'Add' : 'Update'),
